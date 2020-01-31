@@ -20,10 +20,10 @@ interface MedDao {
     suspend fun insertAll(meds: List<Model.Med>)
 
     @Insert
-    fun insert(med: Model.Med)
+    suspend fun insert(med: Model.Med)
 
     @Delete
-    fun delete(med: Model.Med)
+    suspend fun delete(med: Model.Med)
 
     @Query("DELETE FROM med")
     suspend fun deleteAll()

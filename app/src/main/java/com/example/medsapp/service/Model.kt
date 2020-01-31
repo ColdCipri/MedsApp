@@ -5,24 +5,24 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 object Model {
-    data class User(@ColumnInfo(name = "email") var email: String,
-                    @ColumnInfo(name = "password") var password: String,
-                    @ColumnInfo(name = "name") var name: String,
-                    @ColumnInfo(name = "age") var age: Int,
-                    @ColumnInfo(name = "color") var color: String)
-    {
-        @PrimaryKey(autoGenerate = true) var id: Int = 1
-    }
+    data class User(@PrimaryKey
+                    @ColumnInfo(name = "email") val email: String,
+                    @ColumnInfo(name = "password") val password: String,
+                    @ColumnInfo(name = "name") val name: String,
+                    @ColumnInfo(name = "age") val age: Int,
+                    @ColumnInfo(name = "color") val color: String)
+
 
     @Entity
-    data class Med(@ColumnInfo(name = "name") var name: String,
-                   @ColumnInfo(name = "exp_date") var best_before: String,
-                   @ColumnInfo(name = "pieces") var pieces: Int,
-                   @ColumnInfo(name = "base_subst") var base_substance: String,
-                   @ColumnInfo(name = "quantity") var base_substance_quantity: String,
-                   @ColumnInfo(name = "description") var description: String,
-                   @ColumnInfo(name = "userId") var userId: Int)
-    {
-        @PrimaryKey(autoGenerate = true) var id: Int = 1
-    }
+    data class Med(
+        @PrimaryKey(autoGenerate = true)
+        @ColumnInfo(name = "id") var id: Int,
+        @ColumnInfo(name = "name") val name: String,
+        /*@ColumnInfo(name = "exp_date")*/ val exp_date: String,
+        /*@ColumnInfo(name = "pieces")*/ val pieces: Int,
+        /*@ColumnInfo(name = "base_subst")*/ val base_subst: String,
+        /*@ColumnInfo(name = "quantity")*/ val quantity: String,
+        /*@ColumnInfo(name = "description")*/ val description: String,
+        /*@ColumnInfo(name = "userEmail")*/ val userEmail: String
+    )
 }

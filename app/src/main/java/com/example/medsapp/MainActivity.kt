@@ -6,15 +6,16 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.medsapp.dialog.AddDialog
 import com.example.medsapp.medAdapter.MedListAdapter
 import com.example.medsapp.service.MedService
 import com.example.medsapp.service.Model
@@ -25,6 +26,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_home.*
 import java.lang.Exception
+import kotlin.random.Random
 
 
 class MainActivity : AppCompatActivity() {
@@ -43,6 +45,7 @@ class MainActivity : AppCompatActivity() {
 
     private val medCodeService by lazy {
         val factory = ServiceFactory.getInstance("http://192.168.1.9:5050", "admin", "admin")
+        //val factory = ServiceFactory.getInstance("http://172.30.114.204:5050", "admin", "admin")
         factory.build(MedService::class.java)
     }
 
@@ -121,8 +124,125 @@ class MainActivity : AppCompatActivity() {
         readAllMedsFromServer()
 
         fab.setOnClickListener {
-            val intent = Intent(it.context, AddDialog::class.java)
-            it.context.startActivity(intent)
+            /*val intent = Intent(it.context, AddDialog::class.java)
+            it.context.startActivity(intent)*/
+            this.updateTool_layout.visibility = View.VISIBLE
+            this.tool_title.text = "Add tool"
+            this.update_button.text = "Add"
+
+            this.meds_recyclerView.visibility = View.GONE
+
+            this.name_edittext.text.clear()
+            this.best_before_edittext.text.clear()
+            this.pieces_edittext.text .clear()
+            this.base_substance_edittext.text.clear()
+            this.base_substance_quantity_edittext.text.clear()
+            this.description_edittext.text.clear()
+
+        }
+
+        update_button.setOnClickListener{
+            if (this.update_button.text == "Add"){
+                if (name_edittext.text.isEmpty() or
+                    best_before_edittext.text.isEmpty() or
+                    pieces_edittext.text.isEmpty() or
+                    base_substance_edittext.text.isEmpty() or
+                    base_substance_quantity_edittext.text.isEmpty() or
+                    description_edittext.text.isEmpty()) {
+                    AlertDialog.Builder(this)
+                        .setTitle("Warning")
+                        .setMessage("One of the input is empty!")
+                        .setNegativeButton(android.R.string.ok, null)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show()
+                } else {
+                    val rand = Random.nextInt(0,100)
+                    val med = Model.Med(
+                        rand,
+                        this.name_edittext.text.toString(),
+                        this.best_before_edittext.text.toString(),
+                        this.pieces_edittext.text.toString().toInt(),
+                        this.base_substance_edittext.text.toString(),
+                        this.base_substance_quantity_edittext.text.toString(),
+                        this.description_edittext.text.toString(),
+                        this.currentUser.toString()
+                    )
+                    if (med.userEmail == currentUser){
+                        if (wifiEnabled) {
+                            this.disposable = this.medCodeService.create(med)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({
+                                    showResult("Successfully created the new med ${med.name}")
+                                    medViewModel.insert(med)
+                                    adapter.notifyDataSetChanged()
+                                },
+                                    { showResult("Failed to create the new med!")})
+                        } else {
+                            showResult("Wifi is off. Med will be pushed to server when connection is established.")
+                            noWifiMedBuffer.add(med)
+                            medViewModel.insert(med)
+                            adapter.notifyDataSetChanged()
+                        }
+                        this.updateTool_layout.visibility = View.GONE
+                        this.meds_recyclerView.visibility = View.VISIBLE
+                    }
+                }
+            }
+            else
+            {
+                if (name_edittext.text.isEmpty() or
+                    best_before_edittext.text.isEmpty() or
+                    pieces_edittext.text.isEmpty() or
+                    base_substance_edittext.text.isEmpty() or
+                    base_substance_quantity_edittext.text.isEmpty() or
+                    description_edittext.text.isEmpty()) {
+                    AlertDialog.Builder(this)
+                        .setTitle("Warning")
+                        .setMessage("One of the input is empty!")
+                        .setNegativeButton(android.R.string.ok, null)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show()
+                } else {
+                    var id = this.id_edittext.text.toString().toInt()//?!
+                    val med = Model.Med(
+                        id,
+                        this.name_edittext.text.toString(),
+                        this.best_before_edittext.text.toString(),
+                        this.pieces_edittext.text.toString().toInt(),
+                        this.base_substance_edittext.text.toString(),
+                        this.base_substance_quantity_edittext.text.toString(),
+                        this.description_edittext.text.toString(),
+                        this.currentUser.toString()
+                    )
+                    if (med.userEmail == currentUser){
+                        if (wifiEnabled) {
+                            this.disposable = this.medCodeService.update(id, med)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({
+                                    showResult("Successfully updated the med ${med.name}")
+                                    medViewModel.insert(med)
+                                    adapter.notifyDataSetChanged()
+                                },
+                                    { showResult("Failed to update the med!")})
+                        } else {
+                            showResult("Wifi is off. Med will be pushed to server when connection is established.")
+                            noWifiMedBuffer.add(med)
+                            medViewModel.insert(med)
+                            adapter.notifyDataSetChanged()
+                        }
+                        this.updateTool_layout.visibility = View.GONE
+                        this.meds_recyclerView.visibility = View.VISIBLE
+                    }
+
+                }
+            }
+        }
+
+        cancel_button.setOnClickListener{
+            this.updateTool_layout.visibility = View.GONE
+            this.meds_recyclerView.visibility = View.VISIBLE
         }
     }
 
@@ -145,7 +265,7 @@ class MainActivity : AppCompatActivity() {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
-                            showResult("Pushed to server med ${it.name}")
+                            showResult("Pushed to server med!")
                             readAllMedsFromServer()
 
                             adapter.notifyDataSetChanged()
@@ -165,7 +285,7 @@ class MainActivity : AppCompatActivity() {
             this.disposable = this.medCodeService.readAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ items: ArrayList<Model.Med> ->
+                .subscribe({ items: List<Model.Med> ->
                     run {
                         medViewModel.deleteAll()
                         medViewModel.insertAll(items)
@@ -185,6 +305,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showResult(message: String) {
+        Log.d("Item ->", message)
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 

@@ -59,10 +59,18 @@ abstract class MedRoomDatabase : RoomDatabase() {
             medDao.deleteAll()
 
             // Add sample words.
-            var med = Model.Med("Coldrex","25-10-2020",10, "acetilina", "12mg","Pentru durere de cap", 1)
-            //medDao.insert(med)
-            med = Model.Med("Acc","23-08-2020",11, "cilcion", "8mg","Pentru durere de gat", 1)
-            //medDao.insert(med)
+            var med = Model.Med( 0,
+                "Coldrex",
+                "25-10-2020",
+                10,
+                "acetilina",
+                "12mg",
+                "Pentru durere de cap",
+                "admin"
+            )
+            medDao.insert(med)
+            med = Model.Med(1,"Acc", "23-08-2020", 11, "cilcion", "8mg", "Pentru durere de gat", "admin")
+            medDao.insert(med)
         }
     }
 }

@@ -6,18 +6,18 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface UserService {
-    @POST("users")
+    @POST("Users")
     fun create(@Body user: User): Observable<User>
 
-    @GET("users/{id}")
-    fun read(@Path("id") id: Int): Observable<User>
+    @GET("Users/{email}")
+    fun read(@Path("email") email: String): Observable<List<User>>
 
-    @GET("users/")
+    @GET("Users/")
     fun readAll(): Observable<List<User>>
 
-    @PUT("users/{id}")
-    fun update(@Path("id") id: Int, @Body user: User): Observable<User>
+    @PUT("Users/{email}")
+    fun update(@Path("email") email: String, @Body user: User): Observable<User>
 
-    @DELETE("users/{id}")
-    fun delete(@Path("id") id: Int): Observable<Response<Void>>
+    @DELETE("Users/{email}")
+    fun delete(@Path("email") email: String): Observable<Response<Void>>
 }

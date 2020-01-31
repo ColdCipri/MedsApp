@@ -1,6 +1,5 @@
 package com.example.medsapp.medAdapter
 
-import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.medsapp.MainActivity
 import com.example.medsapp.R
-import com.example.medsapp.dialog.EditDialog
 import com.example.medsapp.service.Model;
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.list_layout.view.*
 
@@ -40,42 +37,45 @@ class MedListAdapter (private val context: MainActivity, private var index: Int 
         val current = meds[position]
         holder.med_id.text = current.id.toString()
         holder.med_name.text = current.name
-        holder.med_best_before.text = current.best_before
+        holder.med_best_before.text = current.exp_date
         holder.med_pieces.text = current.pieces.toString()
-        holder.med_base_substance.text = current.base_substance
-        holder.med_base_substance_quantity.text = current.base_substance_quantity
+        holder.med_base_substance.text = current.base_subst
+        holder.med_base_substance_quantity.text = current.quantity
         holder.med_description.text = current.description
 
 
         /*if (current.contributor == context.currentUser)
             holder.itemView.setBackgroundColor(Color.parseColor("#03fc0b"))*/ //??
 
-        holder.itemView.setOnClickListener {
-            context.id_edittext.setText(current.id)
+        /*holder.itemView.setOnClickListener {
+            *//*context.id_edittext.setText(current.id)*//*
             context.name_edittext.setText(current.name)
-            context.best_before_edittext.setText(current.best_before)
+            context.best_before_edittext.setText(current.exp_date)
             context.pieces_edittext.setText(current.pieces)
-            context.base_substance_edittext.setText(current.base_substance)
-            context.base_substance_quantity_edittext.setText(current.base_substance_quantity)
+            context.base_substance_edittext.setText(current.base_subst)
+            context.base_substance_quantity_edittext.setText(current.quantity)
             context.description_edittext.setText(current.description)
 
             index = position
             notifyDataSetChanged()
 
-        }
+        }*/
 
-        holder.itemView.update_button.setOnClickListener {
-            val id = meds[position]?.id
-            val intent = Intent(it.context, EditDialog::class.java).apply{
-                putExtra("id", id)
-            }
-            it.context.startActivity(intent)
-        }
+        holder.itemView.update_button_list.setOnClickListener {
+            index = position
+            context.update_button.text = "Update"
+            context.updateTool_layout.visibility = View.VISIBLE
+            context.meds_recyclerView.visibility = View.GONE
 
-        if (index == position) {
-            holder.itemView.setBackgroundColor(Color.parseColor("#BDBDBD"));
-        } else {
-            holder.itemView.setBackgroundColor(Color.parseColor("#FFFFFF"));
+            context.id_edittext.setText(current.toString())
+            context.name_edittext.setText(current.name)
+            context.best_before_edittext.setText(current.exp_date)
+            context.pieces_edittext.setText(current.pieces.toString())
+            context.base_substance_edittext.setText(current.base_subst)
+            context.base_substance_quantity_edittext.setText(current.quantity)
+            context.description_edittext.setText(current.description)
+
+
         }
     }
 

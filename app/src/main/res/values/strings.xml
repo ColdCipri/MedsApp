@@ -42,5 +42,12 @@
 
 
     <string name="refresh">Refresh</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="text_login">Log In Meds App</string>
+    <string name="button_log_in">Log In</string>
+
+
+    <string name="error_password">Password Error</string>
 
 </resources>

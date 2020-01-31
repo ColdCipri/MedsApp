@@ -91,7 +91,16 @@ class AddDialog : AppCompatActivity() {
             var base_substance_quantity = add_base_substance_quantity.text.toString()
             var description = add_description.text.toString()
 
-            val med = Model.Med(name, best_before, pieces, base_substance, base_substance_quantity, description,1)
+            val med = Model.Med(
+                1,
+                name,
+                best_before,
+                pieces,
+                base_substance,
+                base_substance_quantity,
+                description,
+                "admin"
+            )
 
             this.disposable = this.medCodeService.create(med)
                 .subscribeOn(Schedulers.io())

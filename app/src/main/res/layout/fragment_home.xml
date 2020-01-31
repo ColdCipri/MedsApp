@@ -39,6 +39,7 @@
 
 
         <TextView
+            android:id="@+id/tool_title"
             android:text="@string/update_string"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,6 +53,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/add_id"
             android:inputType="textPersonName"
+            android:visibility="gone"
             />
 
 
@@ -78,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/add_pieces"
-            android:inputType="textPersonName"
+            android:inputType="number"
             />
 
 

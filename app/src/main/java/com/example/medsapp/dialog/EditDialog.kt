@@ -5,10 +5,8 @@ import android.text.Editable
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.medsapp.R
-import com.example.medsapp.database.MedDao
 import com.example.medsapp.service.Model
 import com.example.medsapp.viewmodel.MedViewModel
 import kotlinx.android.synthetic.main.fragment_update.*
@@ -62,7 +60,16 @@ class EditDialog : AppCompatActivity(){
                     var base_substance_quantity = edit_base_substance_quantity.text.toString()
                     var description = edit_description.text.toString()
 
-                medViewModel.update(Model.Med(name, best_before, pieces, base_substance, base_substance_quantity, description, med.userId))
+                medViewModel.update(Model.Med(
+                    3,
+                    name,
+                    best_before,
+                    pieces,
+                    base_substance,
+                    base_substance_quantity,
+                    description,
+                    med.userEmail
+                ))
                 }
             }
         }
@@ -75,10 +82,10 @@ class EditDialog : AppCompatActivity(){
 
         if (med != null) {
             edit_name.text = Editable.Factory.getInstance().newEditable(med.name)
-            edit_best_before.text = Editable.Factory.getInstance().newEditable(med.best_before)
+            edit_best_before.text = Editable.Factory.getInstance().newEditable(med.exp_date)
             edit_pieces.text = Editable.Factory.getInstance().newEditable(med.pieces.toString())
-            edit_base_substance.text = Editable.Factory.getInstance().newEditable(med.base_substance)
-            edit_base_substance_quantity.text = Editable.Factory.getInstance().newEditable(med.base_substance_quantity)
+            edit_base_substance.text = Editable.Factory.getInstance().newEditable(med.base_subst)
+            edit_base_substance_quantity.text = Editable.Factory.getInstance().newEditable(med.quantity)
             edit_description.text = Editable.Factory.getInstance().newEditable(med.description)
         }
     }
