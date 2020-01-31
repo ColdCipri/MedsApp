@@ -9,9 +9,15 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,16 +27,18 @@ import com.example.medsapp.service.MedService
 import com.example.medsapp.service.Model
 import com.example.medsapp.service.ServiceFactory
 import com.example.medsapp.viewmodel.MedViewModel
+import com.google.android.material.navigation.NavigationView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.fragment_update.*
+import kotlinx.android.synthetic.main.nav_header.*
+import kotlinx.android.synthetic.main.nav_header.view.*
 import java.lang.Exception
 import kotlin.random.Random
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var noWifiMedBuffer: MutableList<Model.Med> = mutableListOf()
     private lateinit var medViewModel: MedViewModel
@@ -43,10 +51,14 @@ class MainActivity : AppCompatActivity() {
     private var wifiEnabled: Boolean = true
     var currentUser: String? = ""
 
+    lateinit var toolbar: Toolbar
+    lateinit var drawerLayout: DrawerLayout
+    lateinit var navView: NavigationView
+
 
     private val medCodeService by lazy {
-        val factory = ServiceFactory.getInstance("http://192.168.1.9:5050", "admin", "admin")
-        //val factory = ServiceFactory.getInstance("http://172.30.114.204:5050", "admin", "admin")
+        val factory = ServiceFactory.getInstance("http://192.168.1.9:5050", "admin", "admin")   //for home
+        //val factory = ServiceFactory.getInstance("http://172.30.114.204:5050", "admin", "admin")  //for school
         factory.build(MedService::class.java)
     }
 
@@ -279,10 +291,60 @@ class MainActivity : AppCompatActivity() {
             this.fab.visibility = View.VISIBLE
             this.remove_button.visibility = View.VISIBLE
         }
+
+
+        //for navigation
+        toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+
+        drawerLayout = findViewById(R.id.drawer_layout)
+        navView = findViewById(R.id.nav_view)
+
+        val toggle = ActionBarDrawerToggle(
+            this, drawerLayout, toolbar, 0, 0
+        )
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+        navView.setNavigationItemSelectedListener(this)
+
+        var headerView = navView.getHeaderView(0)
+        var nav_user = headerView.findViewById<TextView>(R.id.nav_name_for_user)
+        nav_user.setText(currentUser.toString())
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
 
+        return true
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.nav_home -> {
+                Toast.makeText(this, "Home clicked", Toast.LENGTH_SHORT).show()
+                AlertDialog.Builder(this)
+                    .setTitle("Warning")
+                    .setMessage("Test!")
+                    .setNegativeButton(android.R.string.ok, null)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show()
+            }
+            R.id.nav_meds -> {
+                Toast.makeText(this, "Meds clicked", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_settings -> {
+                Toast.makeText(this, "Settings clicked", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_contact -> {
+                Toast.makeText(this, "Contact clicked", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_log_out -> {
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                this.finish()
+            }
+        }
+        drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
@@ -340,12 +402,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showResult(message: String) {
-        Log.d("Item ->", message)
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
-
-    /*override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment)
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-    }*/
 }

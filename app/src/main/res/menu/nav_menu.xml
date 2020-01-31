@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="navigation_view">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/nav_home"
@@ -19,5 +17,10 @@
         android:id="@+id/nav_contact"
         android:icon="@android:drawable/ic_menu_call"
         android:title="@string/menu_contact" />
+
+    <item
+        android:id="@+id/nav_log_out"
+        android:icon="@android:drawable/ic_lock_power_off"
+        android:title="@string/menu_log_out" />
 
 </menu>
