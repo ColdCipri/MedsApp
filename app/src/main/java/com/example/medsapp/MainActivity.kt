@@ -25,6 +25,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_update.*
 import java.lang.Exception
 import kotlin.random.Random
 
@@ -124,13 +125,13 @@ class MainActivity : AppCompatActivity() {
         readAllMedsFromServer()
 
         fab.setOnClickListener {
-            /*val intent = Intent(it.context, AddDialog::class.java)
-            it.context.startActivity(intent)*/
             this.updateTool_layout.visibility = View.VISIBLE
             this.tool_title.text = "Add tool"
             this.update_button.text = "Add"
 
             this.meds_recyclerView.visibility = View.GONE
+            this.fab.visibility = View.GONE
+            this.remove_button.visibility = View.GONE
 
             this.name_edittext.text.clear()
             this.best_before_edittext.text.clear()
@@ -139,6 +140,8 @@ class MainActivity : AppCompatActivity() {
             this.base_substance_quantity_edittext.text.clear()
             this.description_edittext.text.clear()
 
+            this.id_edittext.text.clear()
+            this.user_email_edittext.text.clear()
         }
 
         update_button.setOnClickListener{
@@ -155,6 +158,7 @@ class MainActivity : AppCompatActivity() {
                         .setNegativeButton(android.R.string.ok, null)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .show()
+                        this.remove_button.visibility = View.GONE
                 } else {
                     val rand = Random.nextInt(0,100)
                     val med = Model.Med(
@@ -186,6 +190,8 @@ class MainActivity : AppCompatActivity() {
                         }
                         this.updateTool_layout.visibility = View.GONE
                         this.meds_recyclerView.visibility = View.VISIBLE
+                        this.fab.visibility = View.VISIBLE
+                        this.remove_button.visibility = View.VISIBLE
                     }
                 }
             }
@@ -197,23 +203,30 @@ class MainActivity : AppCompatActivity() {
                     base_substance_edittext.text.isEmpty() or
                     base_substance_quantity_edittext.text.isEmpty() or
                     description_edittext.text.isEmpty()) {
-                    AlertDialog.Builder(this)
-                        .setTitle("Warning")
-                        .setMessage("One of the input is empty!")
-                        .setNegativeButton(android.R.string.ok, null)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show()
+                        AlertDialog.Builder(this)
+                            .setTitle("Warning")
+                            .setMessage("One of the input is empty!")
+                            .setNegativeButton(android.R.string.ok, null)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show()
                 } else {
-                    var id = this.id_edittext.text.toString().toInt()//?!
+                    var id = this.id_edittext.text.toString().toInt()
+                    var name = this.name_edittext.text.toString()
+                    var best_before = this.best_before_edittext.text.toString()
+                    var pieces = this.pieces_edittext.text.toString().toInt()
+                    var base_substance = this.base_substance_edittext.text.toString()
+                    var base_susbtance_quantity = this.base_substance_quantity_edittext.text.toString()
+                    var description = this.description_edittext.text.toString()
+                    var user_email = this.user_email_edittext.text.toString()
                     val med = Model.Med(
                         id,
-                        this.name_edittext.text.toString(),
-                        this.best_before_edittext.text.toString(),
-                        this.pieces_edittext.text.toString().toInt(),
-                        this.base_substance_edittext.text.toString(),
-                        this.base_substance_quantity_edittext.text.toString(),
-                        this.description_edittext.text.toString(),
-                        this.currentUser.toString()
+                        name,
+                        best_before,
+                        pieces,
+                        base_substance,
+                        base_susbtance_quantity,
+                        description,
+                        user_email
                     )
                     if (med.userEmail == currentUser){
                         if (wifiEnabled) {
@@ -222,27 +235,73 @@ class MainActivity : AppCompatActivity() {
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({
                                     showResult("Successfully updated the med ${med.name}")
-                                    medViewModel.insert(med)
+                                    medViewModel.update(med)
                                     adapter.notifyDataSetChanged()
                                 },
                                     { showResult("Failed to update the med!")})
-                        } else {
-                            showResult("Wifi is off. Med will be pushed to server when connection is established.")
-                            noWifiMedBuffer.add(med)
-                            medViewModel.insert(med)
-                            adapter.notifyDataSetChanged()
-                        }
+                        } else showResult("Cannot connect to server. Cannot update until a server connection is established.")
                         this.updateTool_layout.visibility = View.GONE
                         this.meds_recyclerView.visibility = View.VISIBLE
+                        this.fab.visibility = View.VISIBLE
+                        this.remove_button.visibility = View.VISIBLE
+                    }
+                    else {
+                        showResult("Can only delete meds created by you.")
+                        this.updateTool_layout.visibility = View.GONE
+                        this.meds_recyclerView.visibility = View.VISIBLE
+                        this.fab.visibility = View.VISIBLE
+                        this.remove_button.visibility = View.VISIBLE
                     }
 
                 }
             }
         }
 
+        remove_button.setOnClickListener{
+            var id = this.id_edittext.text.toString().toInt()
+            var name = this.name_edittext.text.toString()
+            var best_before = this.best_before_edittext.text.toString()
+            var pieces = this.pieces_edittext.text.toString().toInt()
+            var base_substance = this.base_substance_edittext.text.toString()
+            var base_susbtance_quantity = this.base_substance_quantity_edittext.text.toString()
+            var description = this.description_edittext.text.toString()
+            var user_email = this.user_email_edittext.text.toString()
+            val med = Model.Med(
+                id,
+                name,
+                best_before,
+                pieces,
+                base_substance,
+                base_susbtance_quantity,
+                description,
+                user_email
+            )
+            if (med.userEmail== currentUser)
+                if (wifiEnabled)
+                    this.disposable = this.medCodeService.delete(med.id)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                            {
+                                showResult("Successfully deleted the med ${med.name}")
+                                medViewModel.delete(med)
+                                adapter.notifyDataSetChanged()
+                            },
+                            { showResult("Failed to delete the med!") })
+                else showResult("Cannot connect to server. Cannot delete until a server connection is established.")
+            else showResult("Can only delete meds created by you.")
+            this.updateTool_layout.visibility = View.GONE
+            this.meds_recyclerView.visibility = View.VISIBLE
+            this.fab.visibility = View.VISIBLE
+            this.remove_button.visibility = View.VISIBLE
+        }
+
         cancel_button.setOnClickListener{
             this.updateTool_layout.visibility = View.GONE
             this.meds_recyclerView.visibility = View.VISIBLE
+            this.remove_button.visibility = View.VISIBLE
+            this.fab.visibility = View.VISIBLE
+            this.remove_button.visibility = View.VISIBLE
         }
     }
 

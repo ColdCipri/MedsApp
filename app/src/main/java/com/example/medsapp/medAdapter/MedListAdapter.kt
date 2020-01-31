@@ -43,39 +43,25 @@ class MedListAdapter (private val context: MainActivity, private var index: Int 
         holder.med_base_substance_quantity.text = current.quantity
         holder.med_description.text = current.description
 
-
-        /*if (current.contributor == context.currentUser)
-            holder.itemView.setBackgroundColor(Color.parseColor("#03fc0b"))*/ //??
-
-        /*holder.itemView.setOnClickListener {
-            *//*context.id_edittext.setText(current.id)*//*
-            context.name_edittext.setText(current.name)
-            context.best_before_edittext.setText(current.exp_date)
-            context.pieces_edittext.setText(current.pieces)
-            context.base_substance_edittext.setText(current.base_subst)
-            context.base_substance_quantity_edittext.setText(current.quantity)
-            context.description_edittext.setText(current.description)
-
-            index = position
-            notifyDataSetChanged()
-
-        }*/
-
         holder.itemView.update_button_list.setOnClickListener {
             index = position
+
+            context.tool_title.text = "Update tool"
             context.update_button.text = "Update"
             context.updateTool_layout.visibility = View.VISIBLE
             context.meds_recyclerView.visibility = View.GONE
 
-            context.id_edittext.setText(current.toString())
+            context.fab.visibility = View.GONE
+            context.remove_button.visibility = View.VISIBLE
+
+            context.id_edittext.setText(current.id.toString())
             context.name_edittext.setText(current.name)
             context.best_before_edittext.setText(current.exp_date)
             context.pieces_edittext.setText(current.pieces.toString())
             context.base_substance_edittext.setText(current.base_subst)
             context.base_substance_quantity_edittext.setText(current.quantity)
             context.description_edittext.setText(current.description)
-
-
+            context.user_email_edittext.setText(current.userEmail)
         }
     }
 

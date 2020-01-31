@@ -20,6 +20,7 @@
     <string name="add_base_substance">Enter base substance</string>
     <string name="add_base_substance_quantity">Enter quantity of base substance</string>
     <string name="add_description">Enter description</string>
+    <string name="add_user_email">Enter user</string>
 
     <string name="text_id">Id</string>
     <string name="text_name">Name</string>

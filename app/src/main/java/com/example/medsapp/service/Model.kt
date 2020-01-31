@@ -18,11 +18,11 @@ object Model {
         @PrimaryKey(autoGenerate = true)
         @ColumnInfo(name = "id") var id: Int,
         @ColumnInfo(name = "name") val name: String,
-        /*@ColumnInfo(name = "exp_date")*/ val exp_date: String,
-        /*@ColumnInfo(name = "pieces")*/ val pieces: Int,
-        /*@ColumnInfo(name = "base_subst")*/ val base_subst: String,
-        /*@ColumnInfo(name = "quantity")*/ val quantity: String,
-        /*@ColumnInfo(name = "description")*/ val description: String,
-        /*@ColumnInfo(name = "userEmail")*/ val userEmail: String
+        @ColumnInfo(name = "exp_date") val exp_date: String,
+        @ColumnInfo(name = "pieces") val pieces: Int,
+        @ColumnInfo(name = "base_subst") val base_subst: String,
+        @ColumnInfo(name = "quantity") val quantity: String,
+        @ColumnInfo(name = "description") val description: String,
+        @ColumnInfo(name = "userEmail") val userEmail: String
     )
 }

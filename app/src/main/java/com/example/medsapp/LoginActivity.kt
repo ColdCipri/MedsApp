@@ -51,9 +51,6 @@ class LoginActivity : AppCompatActivity() {
         val password = text.toString()
         var passwordOfThisEmail: String
 
-        Log.d("Email = ", email)
-        Log.d("Password = ", password)
-
         if(wifiM.isWifiEnabled)
             this.disposable = this.userService.read(email)
                 .subscribeOn(Schedulers.io())
@@ -61,7 +58,6 @@ class LoginActivity : AppCompatActivity() {
                 .subscribe({ user ->
                     run {
                         passwordOfThisEmail = user[0].password
-                        Log.d("password of this email", passwordOfThisEmail)
 
                         if (password == passwordOfThisEmail) {
                             password_text_input.error = null

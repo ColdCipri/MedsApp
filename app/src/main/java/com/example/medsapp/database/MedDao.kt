@@ -14,7 +14,7 @@ interface MedDao {
     fun getMed(id:Int): Model.Med
 
     @Update
-    fun update(med: Model.Med)
+    suspend fun update(med: Model.Med)
 
     @Insert
     suspend fun insertAll(meds: List<Model.Med>)

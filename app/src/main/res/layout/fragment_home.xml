@@ -56,6 +56,15 @@
             android:visibility="gone"
             />
 
+        <EditText
+            android:id="@+id/user_email_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/add_user_email"
+            android:inputType="textPersonName"
+            android:visibility="gone"
+            />
+
 
         <EditText
             android:id="@+id/name_edittext"
@@ -131,6 +140,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/button_remove"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:visibility="gone"
                 />
 
             <Button
