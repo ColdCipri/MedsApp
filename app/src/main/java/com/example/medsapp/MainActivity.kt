@@ -62,31 +62,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        /*super.onCreate(savedInstanceState)
-        setContentView(R.layout.fragment_home)
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-
-        val fab: FloatingActionButton = findViewById(R.id.fab)
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
-        val navView: NavigationView = findViewById(R.id.nav_view)
-        val navController = findNavController(R.id.nav_host_fragment)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.nav_home, R.id.nav_meds, R.id.nav_settings,
-                R.id.nav_contact
-            ), drawerLayout
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)*/
-
-
-
         wifiM = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         class MyBroadcastReceiver : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
@@ -122,7 +97,8 @@ class MainActivity : AppCompatActivity() {
             meds?.let { adapter.setMeds(it) }
         })
 
-        readAllMedsFromServer()
+
+        readAllMedsFromServer(currentUser!!)
 
         fab.setOnClickListener {
             this.updateTool_layout.visibility = View.VISIBLE
@@ -312,7 +288,7 @@ class MainActivity : AppCompatActivity() {
 
     fun onWifiEnable() {
         if (!medsHaveBeenReadFromServer) {
-            readAllMedsFromServer()
+            readAllMedsFromServer(currentUser!!)
         }
 
         if (noWifiMedBuffer.size > 0) {
@@ -325,7 +301,7 @@ class MainActivity : AppCompatActivity() {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
                             showResult("Pushed to server med!")
-                            readAllMedsFromServer()
+                            readAllMedsFromServer(currentUser!!)
 
                             adapter.notifyDataSetChanged()
                         },
@@ -339,9 +315,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun readAllMedsFromServer() {
+    private fun readAllMedsFromServer(user : String) {
         if (wifiEnabled and !medsHaveBeenReadFromServer)
-            this.disposable = this.medCodeService.readAll()
+            this.disposable = this.medCodeService.readMedsByUser(user)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ items: List<Model.Med> ->

@@ -9,8 +9,8 @@ interface MedService {
     @POST("meds")
     fun create(@Body med: Med): Observable<Boolean>
 
-    @GET("meds/{id}")
-    fun read(@Path("id") id: Int): Observable<Med>
+    @GET("meds/{user}")
+    fun readMedsByUser(@Path("user") userEmail: String): Observable<List<Med>>
 
     @GET("meds/")
     fun readAll(): Observable<List<Med>>
