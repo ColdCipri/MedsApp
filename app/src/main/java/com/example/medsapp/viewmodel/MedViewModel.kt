@@ -45,7 +45,4 @@ class MedViewModel(application: Application) : AndroidViewModel(application)  {
     fun deleteAll() = viewModelScope.launch {
         repository.deleteAll()
     }
-    fun getMed(id: Int) : Model.Med {
-        return repository.getMed(id)
-    }
 }

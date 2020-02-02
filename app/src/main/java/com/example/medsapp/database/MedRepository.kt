@@ -27,8 +27,4 @@ class MedRepository(private val medDao: MedDao) {
     suspend fun delete(med: Model.Med) {
         medDao.delete(med)
     }
-
-    fun getMed(id: Int) : Model.Med{
-        return medDao.getMed(id)
-    }
 }

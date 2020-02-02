@@ -20,6 +20,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.medsapp.medAdapter.MedListAdapter
@@ -321,13 +322,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_home -> {
-                Toast.makeText(this, "Home clicked", Toast.LENGTH_SHORT).show()
-                AlertDialog.Builder(this)
-                    .setTitle("Warning")
-                    .setMessage("Test!")
-                    .setNegativeButton(android.R.string.ok, null)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show()
             }
             R.id.nav_meds -> {
                 Toast.makeText(this, "Meds clicked", Toast.LENGTH_SHORT).show()

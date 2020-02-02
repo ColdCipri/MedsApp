@@ -10,9 +10,6 @@ interface MedDao {
     @Query("SELECT * FROM med")
     fun getAll(): LiveData<List<Model.Med>>
 
-    @Query("SELECT * FROM med WHERE id=:id")
-    fun getMed(id:Int): Model.Med
-
     @Update
     suspend fun update(med: Model.Med)
 
