@@ -185,6 +185,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <ProgressBar
+            android:id="@+id/progressBarClient"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
+            android:visibility="invisible" tools:ignore="MissingConstraints"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/meds_recyclerView"
             android:choiceMode="singleChoice"
@@ -204,18 +211,16 @@
             app:backgroundTint="@color/colorAccent"
             app:srcCompat="@android:drawable/ic_input_add" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_redirect"
+            android:layout_width="276dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="@dimen/fab_margin"
+            app:backgroundTint="@color/colorAccent"
+            app:srcCompat="@android:drawable/btn_dialog" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-    <!--<include
-            layout="@layout/activity_main"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />-->
-
-    <!--<data class=".HomeBinding">
-
-        <variable
-            name="viewModel"
-            type="com.example.medsapp.ui.home.HomeViewModel" />
-    </data>-->
 
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
@@ -96,22 +97,37 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.fragment_home)
 
 
-        adapter = MedListAdapter(this)
-        val recyclerView = findViewById<RecyclerView>(R.id.meds_recyclerView)
 
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        progressBarClient.visibility = View.VISIBLE
+        val handler = Handler()
+        handler.postDelayed({
+            adapter = MedListAdapter(this)
+            val recyclerView = findViewById<RecyclerView>(R.id.meds_recyclerView)
+            recyclerView.adapter = adapter
+            recyclerView.layoutManager = LinearLayoutManager(this)
 
-        medViewModel = ViewModelProviders.of(this)[MedViewModel::class.java]
+            medViewModel = ViewModelProviders.of(this)[MedViewModel::class.java]
 
-        currentUser = intent.getStringExtra("EXTRA_CURRENT_USER")?.toString()
-        medViewModel.allMeds.observe(this, Observer { meds ->
-            // Update the cached copy of the words in the adapter.
-            meds?.let { adapter.setMeds(it) }
-        })
+            currentUser = intent.getStringExtra("EXTRA_CURRENT_USER")?.toString()
+            medViewModel.allMeds.observe(this, Observer { meds ->
+                // Update the cached copy of the words in the adapter.
+                meds?.let { adapter.setMeds(it) }
+            })
+
+            readAllMedsFromServer(currentUser!!)
+            progressBarClient.visibility = View.GONE
+        }, 1000)
 
 
-        readAllMedsFromServer(currentUser!!)
+
+
+        fab_redirect.setOnClickListener{
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            this.finish()
+        }
+
+
 
         fab.setOnClickListener {
             this.updateTool_layout.visibility = View.VISIBLE
@@ -147,7 +163,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         .setNegativeButton(android.R.string.ok, null)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .show()
-                        this.remove_button.visibility = View.GONE
+                    this.remove_button.visibility = View.GONE
                 } else {
                     val rand = Random.nextInt(0,100)
                     val med = Model.Med(
@@ -192,12 +208,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     base_substance_edittext.text.isEmpty() or
                     base_substance_quantity_edittext.text.isEmpty() or
                     description_edittext.text.isEmpty()) {
-                        AlertDialog.Builder(this)
-                            .setTitle("Warning")
-                            .setMessage("One of the input is empty!")
-                            .setNegativeButton(android.R.string.ok, null)
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show()
+                    AlertDialog.Builder(this)
+                        .setTitle("Warning")
+                        .setMessage("One of the input is empty!")
+                        .setNegativeButton(android.R.string.ok, null)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show()
                 } else {
                     var id = this.id_edittext.text.toString().toInt()
                     var name = this.name_edittext.text.toString()
@@ -378,9 +394,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ items: List<Model.Med> ->
                     run {
+                        //progressBarClient.visibility = View.VISIBLE
+                        //val handler = Handler()
+                        //handler.postDelayed({
                         medViewModel.deleteAll()
                         medViewModel.insertAll(items)
-                        adapter.notifyDataSetChanged()
+                        adapter.notifyDataSetChanged()//},1000)
                     }
                 }, { })
     }
